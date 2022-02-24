@@ -1,0 +1,116 @@
+  -- create a table
+CREATE TABLE CustomerInfo (
+  CIFNo INTEGER PRIMARY KEY,
+  CIFName text,
+  CIFDOB date,
+  CIFGender text,
+  CIFBranchCode text
+  );
+
+-- insert some values
+INSERT INTO CustomerInfo VALUES (1, 'Ryan', '23/01/22','M','SG');
+INSERT INTO CustomerInfo VALUES (2, 'Yan', '23/12/21','F','MY');
+INSERT INTO CustomerInfo VALUES (3, 'Xan', '23/11/21','M','MY');
+INSERT INTO CustomerInfo VALUES (4, 'Aan', '23/10/21','F','MY');
+INSERT INTO CustomerInfo VALUES (5, 'Ban', '23/09/21','M','MY');
+INSERT INTO CustomerInfo VALUES (6, 'Can', '23/08/21','F','MY');
+INSERT INTO CustomerInfo VALUES (7, 'Dan', '23/07/21','M','MY');
+INSERT INTO CustomerInfo VALUES (8, 'Ean', '23/06/21','F','MY');
+INSERT INTO CustomerInfo VALUES (9, 'Fan', '23/05/21','M','MY');
+INSERT INTO CustomerInfo VALUES (10, 'Gan', '23/04/21','F','MY');
+INSERT INTO CustomerInfo VALUES (11, 'Han', '23/03/21','F','MY');
+
+-- fetch some values
+SELECT * FROM CustomerInfo;
+
+-- create a table
+CREATE TABLE DepositMaster (
+  CIFNo INTEGER PRIMARY KEY,
+  AccountNo text,
+  CurrencyName text,
+  AccountStatusCode text,
+  ProductCode text,
+  InterestRate double,
+  OSBalanceRM double,
+  MaturityDate date,
+  MthOriginalTenure INTEGER
+  );
+
+-- insert some values
+INSERT INTO DepositMaster VALUES (1, '001','MYR','A','111','0.03','RM1000','23/01/22',12);
+INSERT INTO DepositMaster VALUES (2, '002','MYR','E','222','0.04','RM2000','23/12/21',11);
+INSERT INTO DepositMaster VALUES (3, '003','MYR','A','333','0.04','RM2000','23/12/21',10);
+INSERT INTO DepositMaster VALUES (4, '004','MYR','E','444','0.04','RM2000','23/12/21',9);
+INSERT INTO DepositMaster VALUES (5, '005','MYR','A','555','0.04','RM2000','23/12/21',8);
+INSERT INTO DepositMaster VALUES (6, '006','MYR','E','666','0.04','RM2000','23/12/21',7);
+INSERT INTO DepositMaster VALUES (7, '007','MYR','A','777','0.04','RM2000','23/12/21',6);
+INSERT INTO DepositMaster VALUES (8, '008','MYR','E','888','0.04','RM2000','23/12/21',5);
+INSERT INTO DepositMaster VALUES (9, '009','MYR','A','999','0.04','RM2000','23/12/21',4);
+INSERT INTO DepositMaster VALUES (10, '010','MYR','E','1000','0.04','RM2000','23/12/21',3);
+INSERT INTO DepositMaster VALUES (11, '011','MYR','A','1010','0.04','RM2000','23/12/21',2);
+
+-- fetch some values
+SELECT * FROM DepositMaster;
+
+-- create a table
+CREATE TABLE LoanMaster (
+  CIFNo INTEGER PRIMARY KEY,
+  AccountNo text,
+  CurrencyName text,
+  AccountStatusCode text,
+  ProductCode text,
+  InterestRate double,
+  OSBalanceRM double,
+  MaturityDate date,
+  ReleasedDate date
+  );
+
+-- insert some values
+INSERT INTO LoanMaster VALUES (1, '001','MYR','A','111','0.03','RM1000','23/01/22','23/01/21');
+INSERT INTO LoanMaster VALUES (2, '002','MYR','E','222','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (3, '003','MYR','A','333','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (4, '004','MYR','E','444','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (5, '005','MYR','A','555','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (6, '006','MYR','E','666','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (7, '007','MYR','A','777','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (8, '008','MYR','E','888','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (9, '009','MYR','A','999','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (10, '010','MYR','E','1000','0.04','RM2000','23/12/21','23/01/21');
+INSERT INTO LoanMaster VALUES (11, '011','MYR','A','1010','0.04','RM2000','23/12/21','23/01/21');
+
+-- fetch some values
+SELECT * FROM LoanMaster;
+
+----------------------------------------------- Solution
+
+-- Q1 (List top 10 customers with highest outstanding amout of active loan)
+select CustomerInfo.CIFNo,CustomerInfo.CIFName,DepositMaster.OSBalanceRM as TotalOSBalanceRM 
+from CustomerInfo 
+left join DepositMaster
+on CustomerInfo.CIFNo=DepositMaster.CIFNo
+where DepositMaster.AccountStatusCode='A'
+order by TotalOSBalanceRM desc limit 10;
+
+-- Q2 (List all the customers that have both deposit and and loan accounts)
+select CustomerInfo.CIFNo,CustomerInfo.CIFName,count(DepositMaster.AccountNo) as CountofDepositAccount,
+count(LoanMaster.AccountNo) as CountofLoanAccount, (count(DepositMaster.AccountNo)+count(LoanMaster.AccountNo)) as TotalAccount
+from CustomerInfo
+left join DepositMaster on CustomerInfo.CIFNo=DepositMaster.CIFNo
+left join LoanMaster on CustomerInfo.CIFNo=LoanMaster.CIFNo
+group by CustomerInfo.CIFNo;
+
+-- Q3 (Total number of accountsand outstanding balance for all deposits placed in last month)
+select count(AccountNo) as CountofDepositAccount,OSBalanceRM as TotalOSBalanceRM
+from DepositMaster
+where MaturityDate between add_months(trunc(sysdate,'mm'),-1) 
+and last_day(add_months(trunc(sysdate,'mm'),-1));
+
+-- Q4 (All loan products with segmentation criteria on tenure of loan and the total number of accounts)
+select distinct ProductCode,
+case 
+    when round(MaturityDate-ReleasedDate) >= 0 and round(MaturityDate-ReleasedDate) < 11 then '0-10 days' 
+    when round(MaturityDate-ReleasedDate) >= 1 and round(MaturityDate-ReleasedDate) < 31 then '0-10 days' 
+    when round(MaturityDate-ReleasedDate) >= 31 then 'above 30 days' 
+END as segment,count(LoanMaster.AccountNo) as CountofLoanAccount
+from LoanMaster
+group by ProductCode;
