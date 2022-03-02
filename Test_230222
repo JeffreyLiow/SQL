@@ -117,6 +117,9 @@ and last_day(add_months(trunc(sysdate,'mm'),-1));
 
 -- Q4 (All loan products with segmentation criteria on tenure of loan and the total number of accounts)
 Expected Output: ProductCode, Segment, CountofLoanAccount
+- 0 to 10 days = 0-10 days
+- 11 to 30 days = 11-30 days
+- > 30 days = More than 30 days
 
 select distinct ProductCode,
 case 
