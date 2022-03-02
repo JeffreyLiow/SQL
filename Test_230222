@@ -106,7 +106,7 @@ left join DepositMaster on CustomerInfo.CIFNo=DepositMaster.CIFNo
 left join LoanMaster on CustomerInfo.CIFNo=LoanMaster.CIFNo
 group by CustomerInfo.CIFNo;
 
--- Q3 (Total number of accountsand outstanding balance for all deposits placed in last month)
+-- Q3 (Total number of accounts and outstanding balance for all deposits placed in last month)
 Expected Output: CountofDepositAccount, TotalOSBalance
 
 select count(AccountNo) as CountofDepositAccount,OSBalanceRM as TotalOSBalanceRM
