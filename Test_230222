@@ -84,14 +84,19 @@ SELECT * FROM LoanMaster;
 ----------------------------------------------- Solution
 
 -- Q1 (List top 10 customers with highest outstanding amout of active loan)
+Expected Output: CIFNo, CIFNo, TotalOSBalanceRM
+
 select CustomerInfo.CIFNo,CustomerInfo.CIFName,DepositMaster.OSBalanceRM as TotalOSBalanceRM 
 from CustomerInfo 
 left join DepositMaster
-on CustomerInfo.CIFNo=DepositMaster.CIFNo
-where DepositMaster.AccountStatusCode='A'
+on CustomerInfo.CIFNo=LoanMaster.CIFNo
+where LoanMaster.AccountStatusCode='A'
 order by TotalOSBalanceRM desc limit 10;
 
+
 -- Q2 (List all the customers that have both deposit and and loan accounts)
+Expected Output: CIFNo, CIFName, CountofDepositAccount, CountofLoanAccount, TotalAccount
+
 select CustomerInfo.CIFNo,CustomerInfo.CIFName,count(DepositMaster.AccountNo) as CountofDepositAccount,
 count(LoanMaster.AccountNo) as CountofLoanAccount, (count(DepositMaster.AccountNo)+count(LoanMaster.AccountNo)) as TotalAccount
 from CustomerInfo
@@ -100,12 +105,17 @@ left join LoanMaster on CustomerInfo.CIFNo=LoanMaster.CIFNo
 group by CustomerInfo.CIFNo;
 
 -- Q3 (Total number of accountsand outstanding balance for all deposits placed in last month)
+Expected Output: CountofDepositAccount, TotalOSBalance
+
 select count(AccountNo) as CountofDepositAccount,OSBalanceRM as TotalOSBalanceRM
 from DepositMaster
 where MaturityDate between add_months(trunc(sysdate,'mm'),-1) 
 and last_day(add_months(trunc(sysdate,'mm'),-1));
 
+
 -- Q4 (All loan products with segmentation criteria on tenure of loan and the total number of accounts)
+Expected Output: ProductCode, Segment, CountofLoanAccount
+
 select distinct ProductCode,
 case 
     when round(MaturityDate-ReleasedDate) >= 0 and round(MaturityDate-ReleasedDate) < 11 then '0-10 days' 
