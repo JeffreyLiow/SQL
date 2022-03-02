@@ -88,9 +88,9 @@ SELECT * FROM LoanMaster;
 -- Q1 (List top 10 customers with highest outstanding amout of active loan)
 Expected Output: CIFNo, CIFName, TotalOSBalanceRM
 
-select CustomerInfo.CIFNo,CustomerInfo.CIFName,DepositMaster.OSBalanceRM as TotalOSBalanceRM 
+select CustomerInfo.CIFNo,CustomerInfo.CIFName,LoanMaster.OSBalanceRM as TotalOSBalanceRM 
 from CustomerInfo 
-left join DepositMaster
+left join LoanMaster
 on CustomerInfo.CIFNo=LoanMaster.CIFNo
 where LoanMaster.AccountStatusCode='A'
 order by TotalOSBalanceRM desc limit 10;
