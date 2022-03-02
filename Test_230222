@@ -128,8 +128,8 @@ output
 select distinct ProductCode,
 case 
     when round(MaturityDate-ReleasedDate) >= 0 and round(MaturityDate-ReleasedDate) < 11 then '0-10 days' 
-    when round(MaturityDate-ReleasedDate) >= 1 and round(MaturityDate-ReleasedDate) < 31 then '0-10 days' 
+    when round(MaturityDate-ReleasedDate) >= 1 and round(MaturityDate-ReleasedDate) < 31 then '11-30 days' 
     when round(MaturityDate-ReleasedDate) >= 31 then 'above 30 days' 
-END as segment,count(LoanMaster.AccountNo) as CountofLoanAccount
+END as segment,count(AccountNo) as CountofLoanAccount
 from LoanMaster
 group by ProductCode;
