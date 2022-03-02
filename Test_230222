@@ -81,10 +81,12 @@ INSERT INTO LoanMaster VALUES (11, '011','MYR','A','1010','0.04','RM2000','23/12
 -- fetch some values
 SELECT * FROM LoanMaster;
 
+
+
 ----------------------------------------------- Solution
 
 -- Q1 (List top 10 customers with highest outstanding amout of active loan)
-Expected Output: CIFNo, CIFNo, TotalOSBalanceRM
+Expected Output: CIFNo, CIFName, TotalOSBalanceRM
 
 select CustomerInfo.CIFNo,CustomerInfo.CIFName,DepositMaster.OSBalanceRM as TotalOSBalanceRM 
 from CustomerInfo 
