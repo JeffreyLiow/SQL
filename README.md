@@ -1,2 +1,3 @@
 # SQL
-This is to record my learning path of SQL
+
+Learning path of SQL
